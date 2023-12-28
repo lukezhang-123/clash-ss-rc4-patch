@@ -4,19 +4,21 @@
 
 `Clash` patch, adding `SS` `RC4` cipher support
 
-### Requirement
+[中文说明](README-zh.md)
+
+## Requirement
 
 Clash target version: `1.18`
 
 go require version: `1.21`
 
-### Tested Environment
+## Tested Environment
 
 OS: `Windows 11 22H2`
 
 go version: `go version go1.21.5 windows/amd64`
 
-### Usage
+## Usage
 
 1) copy `config`, `transport` folder to the clash source code folder root, and overwrite files
    ```
@@ -32,21 +34,21 @@ go version: `go version go1.21.5 windows/amd64`
    git apply ss_rc4_patch.patch
    ```
 
-### Startup
+## Startup
 
 1) run clash
    ```
    go run /clash-source-root/main.go
    ```
 
-### error
+## error
 
 if got this error, upgrade your GoLang version > 1.21
 
 ![clash-run-error](2023-12-28_112048.png)
 
-### Go Download
+## Go Download
 
-<img src="https://go.dev/images/go-logo-white.svg" alt="Go">
+<img src="go-logo-blue.svg" alt="Go">
 
 https://go.dev/dl/
