@@ -1,0 +1,76 @@
+Subject: [PATCH] ss rc4 patch
+---
+Index: config/initial.go
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/config/initial.go b/config/initial.go
+--- a/config/initial.go	(revision 310498abd162ef9eb142b08ad041009217d162a6)
++++ b/config/initial.go	(date 1703733372438)
+@@ -60,8 +60,10 @@
+ 	}
+ 
+ 	// initial config.yaml
++	log.Infoln("config file:%s", C.Path.Config())
+ 	if _, err := os.Stat(C.Path.Config()); os.IsNotExist(err) {
+ 		log.Infoln("Can't find config, create a initial config file")
++		log.Infoln("config file:%s", C.Path.Config())
+ 		f, err := os.OpenFile(C.Path.Config(), os.O_CREATE|os.O_WRONLY, 0o644)
+ 		if err != nil {
+ 			return fmt.Errorf("can't create file %s: %s", C.Path.Config(), err.Error())
+Index: transport/shadowsocks/core/cipher.go
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/transport/shadowsocks/core/cipher.go b/transport/shadowsocks/core/cipher.go
+--- a/transport/shadowsocks/core/cipher.go	(revision 310498abd162ef9eb142b08ad041009217d162a6)
++++ b/transport/shadowsocks/core/cipher.go	(date 1703733456491)
+@@ -52,6 +52,7 @@
+ 	KeySize int
+ 	New     func(key []byte) (shadowstream.Cipher, error)
+ }{
++	"RC4":           {16, shadowstream.RC4},
+ 	"RC4-MD5":       {16, shadowstream.RC4MD5},
+ 	"AES-128-CTR":   {16, shadowstream.AESCTR},
+ 	"AES-192-CTR":   {24, shadowstream.AESCTR},
+Index: transport/shadowsocks/shadowstream/cipher.go
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/transport/shadowsocks/shadowstream/cipher.go b/transport/shadowsocks/shadowstream/cipher.go
+--- a/transport/shadowsocks/shadowstream/cipher.go	(revision 310498abd162ef9eb142b08ad041009217d162a6)
++++ b/transport/shadowsocks/shadowstream/cipher.go	(date 1703733492673)
+@@ -114,3 +114,30 @@
+ func RC4MD5(key []byte) (Cipher, error) {
+ 	return rc4Md5Key(key), nil
+ }
++
++type rc4Key []byte
++
++func (k rc4Key) IVSize() int {
++	return 0
++}
++
++func (k rc4Key) Encrypter(iv []byte) cipher.Stream {
++	//h := md5.New()
++	//h.Write([]byte(k))
++	//h.Write(iv)
++	//rc4key := h.Sum(nil)
++	//fmt.Printf("Encrypter key: %x\n", k)
++	c, _ := rc4.NewCipher(k)
++	return c
++}
++
++func (k rc4Key) Decrypter(iv []byte) cipher.Stream {
++	//fmt.Printf("Decrypter key: %x\n", k)
++	c, _ := rc4.NewCipher(k)
++	return c
++}
++
++func RC4(key []byte) (Cipher, error) {
++	//fmt.Printf("%x\n", key)
++	return rc4Key(key), nil
++}
